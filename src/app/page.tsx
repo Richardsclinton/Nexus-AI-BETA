@@ -57,6 +57,7 @@ type ChatResponse = {
 };
 
 const PREMIUM_PACK_TEXT = "Your request requires the premium pack";
+const PREMIUM_PACK_DISPLAY = "This request is not available in the current plan.";
 const PAYMENT_CANCELLED_DISPLAY = "Payment was cancelled before execution.";
 
 type SpeechRecognitionCtor = (new () => {
