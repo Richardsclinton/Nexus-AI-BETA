@@ -1658,8 +1658,65 @@ export default function EnterNexusPage() {
                   )}
                   {openPanel === "history" && (
                     <div className="space-y-4 overflow-y-auto text-sm text-white/70">
-                      <p>Execution history and code unlock live in the section at the bottom of the page. Close this panel and scroll down to view them.</p>
-                      <button type="button" className="rounded-lg border border-white/20 px-3 py-2 text-white/90 hover:bg-white/10" onClick={() => { setOpenPanel(null); executionBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }}>Scroll to history</button>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-semibold text-neon-pink">
+                          Execution History
+                        </h3>
+                        {history.length > 0 && historyUnlocked && (
+                          <div className="flex items-center gap-2">
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={downloadHistoryCsv}
+                              className="px-3 py-1.5 rounded-lg bg-light-blue/20 border border-light-blue/40 text-light-blue text-xs font-semibold hover:bg-light-blue/30 transition-all duration-300 flex items-center gap-1.5"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                              </svg>
+                              CSV
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => setHistory([])}
+                              className="px-3 py-1.5 rounded-lg bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-semibold hover:bg-red-500/25 transition-all duration-300"
+                            >
+                              Clear
+                            </motion.button>
+                          </div>
+                        )}
+                      </div>
+
+                      {!historyUnlocked ? (
+                        <p className="text-xs text-white/60">
+                          Enter your 6-digit history code in the card just below the chat to unlock Execution History.
+                        </p>
+                      ) : history.length === 0 ? (
+                        <p className="text-xs text-white/60">
+                          No execution history yet. Run a Quest and results will appear here.
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {history.map((entry) => (
+                            <div
+                              key={entry.id}
+                              className="rounded-lg border border-white/10 bg-black/30 px-3 py-2.5"
+                            >
+                              <div className="flex items-center justify-between mb-1.5">
+                                <span className="text-[11px] text-light-blue font-semibold uppercase tracking-wide">
+                                  QUEST
+                                </span>
+                                <span className="text-[10px] text-white/40 font-mono">
+                                  {entry.timestamp.toLocaleTimeString()}
+                                </span>
+                              </div>
+                              <p className="text-xs text-white/80 line-clamp-2">
+                                {entry.request}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                   {openPanel === "orchestration" && (
@@ -1681,7 +1738,7 @@ export default function EnterNexusPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="mb-4 rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-4"
+                  className="mb-4 rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm p-6 min-h-[260px]"
                 >
                   <h3 className="text-sm font-semibold text-neon-pink mb-1">Incoming capabilities</h3>
                   <p className="text-xs text-white/60 mb-3">
@@ -1820,209 +1877,16 @@ export default function EnterNexusPage() {
                   </motion.div>
                 )}
 
-                {/* History Section */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1.4 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="mb-8 rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm overflow-hidden relative"
-                  style={{
-                    boxShadow: '0 0 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 123, 198, 0.05)',
-                  }}
-                >
-                  {/* Blur overlay when locked */}
-                  {!historyUnlocked && (
-                    <div
-                      className="absolute inset-0 z-10 backdrop-blur-md bg-black/40 pointer-events-none rounded-2xl"
-                      style={{ filter: "blur(4px)" }}
-                    />
-                  )}
-                  {/* History Header */}
-                  <div className="flex items-center justify-between p-6 border-b border-white/10 relative z-20">
-                    <h3
-                      title="Execution History = past Quests with request, response, and orchestration trace"
-                      className="text-lg md:text-xl font-semibold text-neon-pink"
-                    >
-                      Execution History
-                    </h3>
-                    {history.length > 0 && historyUnlocked && (
-                      <div className="flex items-center gap-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={downloadHistoryCsv}
-                          className="px-4 py-2 rounded-lg bg-light-blue/20 border border-light-blue/40 text-light-blue text-sm font-semibold hover:bg-light-blue/30 transition-all duration-300 flex items-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                          Download CSV
-                        </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setHistory([])}
-                        className="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-400 text-sm font-semibold hover:bg-red-500/30 transition-all duration-300"
-                      >
-                        Clear
-                      </motion.button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* History Content - when locked, do not render real content (prevents copy-paste) */}
-                  <div className="enter-history-scroll max-h-[500px] min-h-0 overflow-y-auto overflow-x-hidden p-6 relative z-20">
-                    {history.length === 0 ? (
-                      <div className="text-center py-8 text-white/40">
-                        <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p className="text-sm">No execution history yet</p>
-                        <p className="text-xs mt-1 text-white/30">Your requests and responses will appear here</p>
-                      </div>
-                    ) : !historyUnlocked ? (
-                      /* Locked: placeholder only — no real content in DOM so it cannot be copied */
-                      <div className="text-center py-12 text-white/50 select-none">
-                        <svg className="w-14 h-14 mx-auto mb-4 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        <p className="text-sm font-medium">Content locked</p>
-                        <p className="text-xs mt-1 text-white/40">Enter your 6-digit code above to view execution history</p>
-                        <div className="mt-6 flex justify-center gap-2">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <div key={i} className="h-2 w-12 rounded bg-white/20" aria-hidden="true" />
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {history.map((entry) => (
-                          <motion.div
-                            key={entry.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="p-4 rounded-xl border border-white/5 bg-black/20 hover:border-white/10 transition-all duration-300"
-                          >
-                            {/* Request */}
-                            <div className="mb-3">
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xs text-neon-pink font-semibold">REQUEST</span>
-                                <span className="text-xs text-white/40">
-                                  {entry.timestamp.toLocaleTimeString()}
-                                </span>
-                              </div>
-                              <p className="text-sm text-white/80">{entry.request}</p>
-                            </div>
-
-                            {/* Response (texte brut) */}
-                            {entry.response != null && entry.response !== "" && (
-                              <div className="mb-3">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-xs text-light-blue font-semibold">RESPONSE</span>
-                                </div>
-                                <div className="text-sm text-white/80 leading-relaxed whitespace-pre-wrap rounded-lg bg-black/30 border border-white/5 p-3 max-h-[200px] overflow-y-auto overflow-x-hidden">
-                                  {entry.response}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Media (image / trailer) */}
-                            {(entry.videoUrl || entry.imageUrl) && (
-                              <div className="mb-3">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-xs text-neon-pink font-semibold">
-                                    {entry.mode === "trailer" ? "TRAILER" : entry.mode === "image" ? "IMAGE" : "OUTPUT"}
-                                  </span>
-                                </div>
-                                {entry.mode === "trailer" && entry.videoUrl && (
-                                  <div className="space-y-2">
-                                    <video
-                                      controls
-                                      className="w-full max-w-md rounded-lg border border-white/10 bg-black"
-                                      src={entry.videoUrl}
-                                    />
-                                    <a
-                                      href={entry.videoUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="text-xs text-light-blue hover:text-white underline"
-                                    >
-                                      Open trailer in a new tab
-                                    </a>
-                                  </div>
-                                )}
-                                {entry.mode === "image" && entry.imageUrl && (
-                                  <div className="space-y-2 flex flex-col items-start">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                      src={entry.imageUrl}
-                                      alt="Generated"
-                                      className="max-w-xs rounded-lg border border-white/10 bg-black/40 object-contain"
-                                    />
-                                    <a
-                                      href={entry.imageUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="text-xs text-light-blue hover:text-white underline"
-                                    >
-                                      Open image in a new tab
-                                    </a>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Orchestrator Actions */}
-                            {entry.orchestratorActions.length > 0 && (
-                              <div className="mb-3">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-xs text-light-blue font-semibold">NEXUS ORCHESTRATOR</span>
-                                </div>
-                                <div className="space-y-1">
-                                  {entry.orchestratorActions.map((action, idx) => (
-                                    <p key={idx} className="text-xs text-white/60 pl-4">
-                                      • {action}
-                                    </p>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* AI Models */}
-                            {entry.aiModels.length > 0 && (
-                              <div>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-xs text-neon-pink font-semibold">AI MODELS</span>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                  {entry.aiModels.map((model, idx) => (
-                                    <span
-                                      key={idx}
-                                      className="px-2 py-1 rounded-lg bg-neon-pink/10 border border-neon-pink/30 text-neon-pink text-xs"
-                                    >
-                                      {model}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </motion.div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
                 </div>
 
-                <div className="flex flex-col min-h-0 overflow-auto pl-2">
+                <div className="flex flex-col min-h-[900px] overflow-auto pl-2">
                 {/* AI Agents Section */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 1.45 }}
                   whileHover={{ scale: 1.02 }}
-                  className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm overflow-hidden relative flex-1 min-h-0 flex flex-col"
+                  className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm overflow-hidden relative flex flex-col min-h-[600px]"
                   style={{
                     boxShadow: '0 0 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(163, 216, 244, 0.05)',
                   }}
@@ -2031,7 +1895,7 @@ export default function EnterNexusPage() {
                     <div className="absolute inset-0 z-10 backdrop-blur-md bg-black/40 pointer-events-none rounded-2xl" style={{ filter: "blur(4px)" }} />
                   )}
                   {/* AI Agents Header */}
-                  <div className="flex items-center justify-between p-6 border-b border-white/10 relative z-20">
+                  <div className="flex items-center justify-between p-4 border-b border-white/10 relative z-20">
                     <h3
                       className="text-lg md:text-xl font-semibold text-neon-pink"
                       title="Agent-level orchestration trace for each Quest"
@@ -2044,7 +1908,7 @@ export default function EnterNexusPage() {
                   </div>
 
                   {/* AI Agents Content - when locked, do not render real content (prevents copy-paste) */}
-                  <div className="enter-history-scroll max-h-[500px] overflow-y-auto p-6 relative z-20">
+                  <div className="enter-history-scroll max-h-[500px] overflow-y-auto p-4 relative z-20">
                     {history.length === 0 ? (
                       <div className="text-center py-8 text-white/40">
                         <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">

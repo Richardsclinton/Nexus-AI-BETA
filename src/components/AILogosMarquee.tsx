@@ -31,29 +31,35 @@ export default function AILogosMarquee() {
   }, []);
 
   return (
-    <section className="relative w-full py-10 md:py-12 overflow-hidden">
-      {/* Texte au-dessus */}
-      <div className="text-center mb-6 md:mb-8 px-4" />
+    <section className="relative w-full py-6 md:py-8 overflow-hidden">
+      {/* Container global centré et plus compact */}
+      <div className="mx-auto max-w-5xl px-4">
+        {/* Texte au-dessus (légère accroche luxe) */}
+        <div className="text-center mb-4 md:mb-6">
+          <p className="text-[11px] md:text-xs tracking-[0.25em] uppercase text-white/40">
+            Trusted AI ecosystem
+          </p>
+        </div>
 
-      {/* Container de la bande avec effet fade */}
-      <div className="relative w-full">
-        <div
-          className="absolute left-0 top-0 bottom-0 w-32 md:w-48 z-10 pointer-events-none"
-          style={{
-            background: "linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, transparent 100%)",
-          }}
-        />
-        <div
-          className="absolute right-0 top-0 bottom-0 w-32 md:w-48 z-10 pointer-events-none"
-          style={{
-            background: "linear-gradient(to left, rgba(0, 0, 0, 0.8) 0%, transparent 100%)",
-          }}
-        />
+        {/* Container de la bande avec effet fade */}
+        <div className="relative w-full rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 via-white/0 to-white/5 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.6)]">
+          <div
+            className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-24 z-10"
+            style={{
+              background: "linear-gradient(to right, rgba(0, 0, 0, 0.9) 0%, transparent 100%)",
+            }}
+          />
+          <div
+            className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-24 z-10"
+            style={{
+              background: "linear-gradient(to left, rgba(0, 0, 0, 0.9) 0%, transparent 100%)",
+            }}
+          />
 
-        {/* Bande de logos animée — minimaliste & luxueuse */}
-        <div className="flex overflow-hidden border-y border-white/10 bg-black/30 py-2">
-          <motion.div
-            className="flex gap-8 md:gap-10 lg:gap-12 py-4 md:py-5"
+          {/* Bande de logos animée — plus petite & plus luxueuse */}
+          <div className="flex overflow-hidden rounded-3xl bg-black/40 py-3 md:py-4">
+            <motion.div
+              className="flex gap-6 md:gap-8 lg:gap-10 py-2 md:py-3"
             animate={{
               x: ["0%", `-${100 / DUPLICATE_COUNT}%`],
             }}
@@ -66,60 +72,61 @@ export default function AILogosMarquee() {
             style={{
               willChange: "transform",
             }}
-          >
-            {duplicatedLogos.map((logo, index) => (
-              <motion.div
-                key={`${logo.name}-${index}`}
-                className="flex-shrink-0 flex items-center justify-center"
-                whileHover={{
-                  scale: 1.15,
-                  opacity: 1,
-                }}
-                initial={{ opacity: 0.85 }}
-                style={{
-                  width: "56px",
-                  height: "56px",
-                  transition: "all 0.3s ease",
-                }}
-              >
-                <Image
-                  src={logo.path}
-                  alt={logo.name}
-                  width={100}
-                  height={100}
-                  className="object-contain w-full h-full"
+            >
+              {duplicatedLogos.map((logo, index) => (
+                <motion.div
+                  key={`${logo.name}-${index}`}
+                  className="flex-shrink-0 flex items-center justify-center"
+                  whileHover={{
+                    scale: 1.12,
+                    opacity: 1,
+                  }}
+                  initial={{ opacity: 0.85 }}
                   style={{
-                    opacity: 0.9,
-                    filter:
-                      "brightness(1.15) contrast(1.1) drop-shadow(0 0 8px rgba(163, 216, 244, 0.45))",
+                    width: "44px",
+                    height: "44px",
                     transition: "all 0.3s ease",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = "1";
-                    e.currentTarget.style.filter =
-                        "brightness(1.3) contrast(1.15) drop-shadow(0 0 18px rgba(255, 123, 198, 0.9))";
-                  }}
-                  onMouseLeave={(e) => {
-                      e.currentTarget.style.opacity = "0.9";
+                >
+                  <Image
+                    src={logo.path}
+                    alt={logo.name}
+                    width={80}
+                    height={80}
+                    className="object-contain w-full h-full rounded-xl"
+                    style={{
+                      opacity: 0.92,
+                      filter:
+                        "brightness(1.18) contrast(1.15) drop-shadow(0 0 12px rgba(163, 216, 244, 0.55))",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "1";
                       e.currentTarget.style.filter =
-                        "brightness(1.15) contrast(1.1) drop-shadow(0 0 10px rgba(163, 216, 244, 0.45))";
-                  }}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+                        "brightness(1.3) contrast(1.2) drop-shadow(0 0 22px rgba(255, 123, 198, 0.95))";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "0.92";
+                      e.currentTarget.style.filter =
+                        "brightness(1.18) contrast(1.15) drop-shadow(0 0 12px rgba(163, 216, 244, 0.55))";
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
-      </div>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-        className="text-center mt-8 md:mt-12 text-sm md:text-base text-white/50 px-4"
-      >
-        Powered by the world&apos;s best AI models.
-      </motion.p>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-center mt-6 md:mt-8 text-xs md:text-sm text-white/50"
+        >
+          Powered by the world&apos;s best AI models.
+        </motion.p>
+      </div>
     </section>
   );
 }
