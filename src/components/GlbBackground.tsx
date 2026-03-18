@@ -21,13 +21,15 @@ function BrainMesh() {
     clonedScene.traverse((child) => {
       if (child instanceof THREE.Mesh && child.material) {
         child.material = new THREE.MeshStandardMaterial({
-          color: "#050816",
-          emissive: "#A3D8F4",
-          emissiveIntensity: 0.6,
+          // base sombre neutre
+          color: "#020617",
+          // émissif gris clair pour un rendu holographique neutre
+          emissive: "#9ca3af",
+          emissiveIntensity: 0.8,
           transparent: true,
           opacity: 0.9,
-          roughness: 0.35,
-          metalness: 0.6,
+          roughness: 0.4,
+          metalness: 0.5,
         });
       }
     });
@@ -51,12 +53,21 @@ function Scene() {
     <>
       <color attach="background" args={["#000000"]} />
       <ambientLight intensity={0.25} />
+      {/* key light gris froid */}
       <spotLight
         position={[0, 3, 6]}
         angle={0.5}
         penumbra={0.8}
-        intensity={1.2}
-        color="#A3D8F4"
+        intensity={1.1}
+        color="#e5e7eb"
+      />
+      {/* rim light gris bleuté */}
+      <spotLight
+        position={[-3, 1.5, -2]}
+        angle={0.7}
+        penumbra={0.9}
+        intensity={0.7}
+        color="#9ca3af"
       />
       <Suspense fallback={null}>
         <BrainMesh />
@@ -67,7 +78,7 @@ function Scene() {
 
 function GlbBackgroundCanvas() {
   return (
-    <Canvas
+      <Canvas
       camera={{ position: [0, 0.7, 4.2], fov: 50 }}
       className="fixed inset-0 w-full h-full"
       style={{
@@ -76,7 +87,7 @@ function GlbBackgroundCanvas() {
         width: "100%",
         height: "100%",
         background:
-          "radial-gradient(ellipse 110% 120% at 50% 0%, rgba(10, 20, 40, 0.9) 0%, rgba(0, 0, 0, 0.98) 60%)",
+          "radial-gradient(ellipse 120% 140% at 50% 0%, rgba(75, 85, 99, 0.55) 0%, rgba(17, 24, 39, 1) 45%, rgba(0, 0, 0, 1) 80%)",
         zIndex: 0,
         pointerEvents: "none",
       }}

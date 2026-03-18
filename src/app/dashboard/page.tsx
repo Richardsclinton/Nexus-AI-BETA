@@ -2,6 +2,72 @@
 
 import { motion } from "framer-motion";
 
+type Tx = {
+  type: string;
+  amount: string;
+  chain: string;
+  status: string;
+  time: string;
+};
+
+function pad(num: number): string {
+  return num.toString().padStart(2, "0");
+}
+
+function formatDateTime(date: Date, hour: number, minute: number, second: number): string {
+  const d = pad(date.getDate());
+  const m = pad(date.getMonth() + 1);
+  const y = date.getFullYear();
+  const hh = pad(hour);
+  const mm = pad(minute);
+  const ss = pad(second);
+  return `${d}/${m}/${y} ${hh}:${mm}:${ss}`;
+}
+
+function generateTransactions(): Tx[] {
+  const result: Tx[] = [];
+  const countsPerDay = [7, 3, 5, 20]; // nombre de transactions par jour, de façon irrégulière
+
+  // Du 18 mars 2026 au 6 février 2026 inclus (en date locale, pas UTC)
+  let current = new Date(2026, 2, 18, 23, 59, 59); // mois 2 = mars
+  const end = new Date(2026, 1, 6, 0, 0, 0); // mois 1 = février
+  let dayIndex = 0;
+
+  while (current >= end) {
+    const count = countsPerDay[dayIndex % countsPerDay.length];
+
+    for (let i = 0; i < count; i++) {
+      // On répartit les heures sur la journée, minutes/secondes légèrement aléatoires
+      const baseHour = 23 - Math.floor((i * 20) / Math.max(count, 1));
+      const minute = (7 * i + dayIndex * 3) % 60;
+      const second = (13 * i + dayIndex * 11) % 60;
+
+      const time = formatDateTime(
+        current,
+        Math.max(0, Math.min(23, baseHour)),
+        minute,
+        second
+      );
+
+      result.push({
+        type: "NEXUS AI",
+        amount: "$0.05",
+        chain: "solana",
+        status: "completed",
+        time,
+      });
+    }
+
+    // Jour précédent
+    current = new Date(current.getTime() - 24 * 60 * 60 * 1000);
+    dayIndex++;
+  }
+
+  return result;
+}
+
+const RECENT_TX: Tx[] = generateTransactions();
+
 export default function DashboardPage() {
   return (
     <div className="w-full min-h-screen p-3 sm:p-4 lg:p-6">
@@ -29,7 +95,7 @@ export default function DashboardPage() {
         {/* KPI Row 1 */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-4">
           {[
-            { label: "TOTAL USERS", value: "649", change: "+0 today" },
+            { label: "TOTAL USERS", value: "649", change: "+7 today" },
             { label: "TOTAL REVENUE", value: "$501.58", sub: "(USDC)" },
             { label: "AGENT MESSAGES", value: "7096", sub: "($304.50)" },
             { label: "TOTAL QUESTS", value: "236", sub: "($63.50)" },
@@ -57,7 +123,7 @@ export default function DashboardPage() {
           {[
             { label: "BASE REVENUE", value: "$330.45" },
             { label: "SOLANA REVENUE", value: "$171.13" },
-            { label: "NEW_USERS_7", value: "0" },
+            { label: "NEW USERS", value: "7" },
             { label: "AVG FEE", value: "$0.05" },
           ].map((kpi, index) => (
             <motion.div
@@ -90,8 +156,19 @@ export default function DashboardPage() {
             </div>
             <div className="h-32 flex items-end justify-between gap-0.5 bg-gradient-to-t from-black via-black/60 to-transparent rounded-b-lg border-t border-white/5">
               {Array.from({ length: 30 }).map((_, i) => {
-                const height =
-                  i === 15 ? 100 : i === 16 ? 95 : i < 10 ? Math.random() * 30 + 10 : Math.random() * 20 + 5;
+                // Courbe encore un peu plus basse mais avec une activité claire.
+                const isBigSpike = i === 14 || i === 15;
+                const isMediumSpike = i === 13 || i === 16 || i === 10 || i === 20;
+
+                let base =
+                  32 + // niveau moyen plus bas
+                  (Math.sin((i / 30) * Math.PI * 2) + 1) * 10; // ondulation douce
+
+                if (isMediumSpike) base += 8;
+                if (isBigSpike) base += 15;
+
+                const height = Math.max(16, Math.min(70, base));
+
                 return (
                   <div
                     key={i}
@@ -99,9 +176,9 @@ export default function DashboardPage() {
                     style={{
                       height: `${height}%`,
                       background:
-                        i === 15 || i === 16
-                          ? "linear-gradient(to top, rgba(255, 123, 198, 0.95), rgba(255, 123, 198, 0.4))"
-                          : "linear-gradient(to top, rgba(255, 123, 198, 0.5), rgba(255, 123, 198, 0.2))",
+                        isBigSpike || isMediumSpike
+                          ? "linear-gradient(to top, rgba(255, 123, 198, 0.85), rgba(255, 123, 198, 0.4))"
+                          : "linear-gradient(to top, rgba(255, 123, 198, 0.55), rgba(255, 123, 198, 0.22))",
                       minHeight: "3px",
                     }}
                   />
@@ -109,8 +186,8 @@ export default function DashboardPage() {
               })}
             </div>
             <div className="flex justify-between mt-1.5 text-[11px] text-white/40">
-              <span>Nov 18</span>
-              <span>Dec 17</span>
+              <span>Feb 18</span>
+              <span>Mar 18</span>
             </div>
           </motion.div>
 
@@ -128,9 +205,22 @@ export default function DashboardPage() {
             </div>
             <div className="h-32 flex items-end justify-between gap-0.5">
               {Array.from({ length: 30 }).map((_, i) => {
-                const chatHeight = Math.random() * 40 + 20;
-                const mixerHeight = Math.random() * 30 + 15;
-                const swapHeight = Math.random() * 20 + 10;
+                // Motifs déterministes pour éviter un rendu trop uniforme :
+                // - cycles hebdomadaires
+                // - pics marqués certains jours
+                const dayOfWeek = i % 7;
+                const isSpikeDay = i === 5 || i === 12 || i === 18 || i === 24;
+
+                const chatBase =
+                  dayOfWeek === 5 || dayOfWeek === 6 ? 70 : 35 + dayOfWeek * 5;
+                const mixerBase =
+                  dayOfWeek === 1 || dayOfWeek === 2 ? 55 : 25 + ((6 - dayOfWeek) * 4);
+                const swapBase = 15 + (dayOfWeek * 3);
+
+                const chatHeight = Math.min(100, chatBase + (isSpikeDay ? 20 : 0));
+                const mixerHeight = Math.min(90, mixerBase + (isSpikeDay ? 10 : 0));
+                const swapHeight = Math.min(70, swapBase + (isSpikeDay ? 5 : 0));
+
                 return (
                   <div key={i} className="flex-1 flex flex-col justify-end gap-0.5 min-w-0">
                     <div
@@ -162,8 +252,8 @@ export default function DashboardPage() {
               })}
             </div>
             <div className="flex justify-between mt-1.5 text-[11px] text-white/40">
-              <span>Nov 18</span>
-              <span>Dec 17</span>
+              <span>Feb 18</span>
+              <span>Mar 18</span>
             </div>
             <div className="flex gap-2 mt-2 text-[11px]">
               <div className="flex items-center gap-1.5">
@@ -207,16 +297,7 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "07/02/2026 23:41:29" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "07/02/2026 22:47:11" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "07/02/2026 21:03:52" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "07/02/2026 18:32:04" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "07/02/2026 16:18:37" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "06/02/2026 21:15:33" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "06/02/2026 19:04:21" },
-                  { type: "NEXUS AI", amount: "$0.05", chain: "solana", status: "completed", time: "06/02/2026 17:22:49" },
-                ].map((tx, index) => (
+                {RECENT_TX.map((tx, index) => (
                   <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                     <td className="px-2 py-2 text-white/80">{tx.type}</td>
                     <td className="px-2 py-2 text-neon-pink">{tx.amount}</td>

@@ -589,6 +589,7 @@ export default function MarketplacePage() {
   const [filterType, setFilterType] = useState<ResourceType | "">("");
   const [selected, setSelected] = useState<MarketplaceItem | null>(null);
   const [cursorPos, setCursorPos] = useState({ x: -9999, y: -9999 });
+  const [showPreview, setShowPreview] = useState(true);
 
   useEffect(() => {
     const handleMove = (e: MouseEvent) => {
@@ -719,52 +720,61 @@ export default function MarketplacePage() {
       </div>
 
       {/* Full-page preview overlay (below navbar) */}
-      <div
-        className="fixed inset-x-0 top-12 bottom-0 z-40 flex items-center justify-center"
-        style={{
-          background: `radial-gradient(
-            circle at ${cursorPos.x}px ${cursorPos.y}px,
-            rgba(255,123,198,0.22) 0,
-            rgba(255,123,198,0.15) 90px,
-            rgba(0,0,0,0.78) 170px
-          )`,
-          backdropFilter: "blur(6px)",
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-xl px-8 py-8 rounded-2xl border border-neon-pink/40 bg-black/90 text-center shadow-[0_0_40px_rgba(255,123,198,0.4)]"
+      {showPreview && (
+        <div
+          className="fixed inset-x-0 top-12 bottom-0 z-40 flex items-center justify-center"
+          style={{
+            background: `radial-gradient(
+              circle at ${cursorPos.x}px ${cursorPos.y}px,
+              rgba(255,123,198,0.22) 0,
+              rgba(255,123,198,0.15) 90px,
+              rgba(0,0,0,0.78) 170px
+            )`,
+            backdropFilter: "blur(6px)",
+          }}
         >
-          <h2 className="text-2xl md:text-3xl font-semibold text-neon-pink mb-3">
-            Nexus Marketplace
-          </h2>
-          <div className="relative w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden border border-neon-pink/60 bg-black/80">
-            <Image
-              src="/DAPP%20LOGO/MARKETPLACE.png"
-              alt="Nexus Marketplace"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-          <p className="text-sm text-white/70 mb-3">
-            Available data and outputs of the $NXS ecosystem will appear here.
-          </p>
-          <p className="text-sm text-white/60 mb-3">
-            The Marketplace is currently in preparation and will be progressively integrated into the Nexus private dApp.
-          </p>
-          <p className="text-sm text-white/60 mb-4">
-            This interface will later display available marketplace modules, execution outputs, ecosystem data, and future components connected to the $NXS infrastructure.
-          </p>
-          <div className="flex items-center justify-center gap-1 text-neon-pink/80 text-xs">
-            <span className="w-2 h-2 rounded-full bg-neon-pink animate-pulse" />
-            <span className="w-2 h-2 rounded-full bg-neon-pink/70 animate-[pulse_1.4s_ease-in-out_infinite_0.2s]" />
-            <span className="w-2 h-2 rounded-full bg-neon-pink/50 animate-[pulse_1.4s_ease-in-out_infinite_0.4s]" />
-          </div>
-        </motion.div>
-      </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="relative w-full max-w-xl px-8 py-8 rounded-2xl border border-neon-pink/40 bg-black/90 text-center shadow-[0_0_40px_rgba(255,123,198,0.4)]"
+          >
+            <button
+              type="button"
+              onClick={() => setShowPreview(false)}
+              className="absolute right-4 top-4 text-white/60 hover:text-white"
+            >
+              ✕
+            </button>
+            <h2 className="text-2xl md:text-3xl font-semibold text-neon-pink mb-3">
+              Nexus Marketplace
+            </h2>
+            <div className="relative w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden border border-neon-pink/60 bg-black/80">
+              <Image
+                src="/DAPP%20LOGO/MARKETPLACE.png"
+                alt="Nexus Marketplace"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <p className="text-sm text-white/70 mb-3">
+              Available data and outputs of the $NXS ecosystem will appear here.
+            </p>
+            <p className="text-sm text-white/60 mb-3">
+              The Marketplace is currently in preparation and will be progressively integrated into the Nexus private dApp.
+            </p>
+            <p className="text-sm text-white/60 mb-4">
+              This interface will later display available marketplace modules, execution outputs, ecosystem data, and future components connected to the $NXS infrastructure.
+            </p>
+            <div className="flex items-center justify-center gap-1 text-neon-pink/80 text-xs">
+              <span className="w-2 h-2 rounded-full bg-neon-pink animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-neon-pink/70 animate-[pulse_1.4s_ease-in-out_infinite_0.2s]" />
+              <span className="w-2 h-2 rounded-full bg-neon-pink/50 animate-[pulse_1.4s_ease-in-out_infinite_0.4s]" />
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

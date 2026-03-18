@@ -29,6 +29,7 @@ export default function AICompanionPage() {
     execute: true,
     marketplace: false,
   });
+  const [showPreview, setShowPreview] = useState(true);
 
   return (
     <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
@@ -327,41 +328,50 @@ export default function AICompanionPage() {
       </div>
 
       {/* Full-page preview overlay (below navbar) */}
-      <div className="fixed inset-x-0 top-12 bottom-0 z-40 flex items-center justify-center bg-black/75 backdrop-blur-sm">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className="w-full max-w-md px-8 py-8 rounded-2xl border border-neon-pink/40 bg-black/90 text-center shadow-[0_0_40px_rgba(255,123,198,0.4)]"
-        >
-          <h2 className="text-xl md:text-2xl font-semibold text-neon-pink mb-2">
-            BitNex AI Companion
-          </h2>
-          <div className="relative w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden border border-neon-pink/60 bg-black/80">
-            <Image
-              src="/BitNex/Bitnex.png"
-              alt="BitNex"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
-          <p className="text-sm text-white/70 mb-4">
-            Available at the launch of the BitNex beta.
-          </p>
-          <p className="text-sm text-white/60 mb-3">
-            Currently in preparation and will be released soon in beta.
-          </p>
-          <p className="text-sm text-white/60 mb-6">
-            The Nexus AI Companion is under active development. New capabilities, integrations and execution features will progressively appear in this interface as the ecosystem evolves.
-          </p>
-          <div className="flex items-center justify-center gap-1 text-neon-pink/80 text-xs">
-            <span className="w-2 h-2 rounded-full bg-neon-pink animate-pulse" />
-            <span className="w-2 h-2 rounded-full bg-neon-pink/70 animate-[pulse_1.4s_ease-in-out_infinite_0.2s]" />
-            <span className="w-2 h-2 rounded-full bg-neon-pink/50 animate-[pulse_1.4s_ease-in-out_infinite_0.4s]" />
-          </div>
-        </motion.div>
-      </div>
+      {showPreview && (
+        <div className="fixed inset-x-0 top-12 bottom-0 z-40 flex items-center justify-center bg-black/75 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="relative w-full max-w-md px-8 py-8 rounded-2xl border border-neon-pink/40 bg-black/90 text-center shadow-[0_0_40px_rgba(255,123,198,0.4)]"
+          >
+            <button
+              type="button"
+              onClick={() => setShowPreview(false)}
+              className="absolute right-4 top-4 text-white/60 hover:text-white"
+            >
+              ✕
+            </button>
+            <h2 className="text-xl md:text-2xl font-semibold text-neon-pink mb-2">
+              BitNex AI Companion
+            </h2>
+            <div className="relative w-24 h-24 mx-auto mb-4 rounded-2xl overflow-hidden border border-neon-pink/60 bg-black/80">
+              <Image
+                src="/BitNex/Bitnex.png"
+                alt="BitNex"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+            <p className="text-sm text-white/70 mb-4">
+              Available at the launch of the BitNex beta.
+            </p>
+            <p className="text-sm text-white/60 mb-3">
+              Currently in preparation and will be released soon in beta.
+            </p>
+            <p className="text-sm text-white/60 mb-6">
+              The Nexus AI Companion is under active development. New capabilities, integrations and execution features will progressively appear in this interface as the ecosystem evolves.
+            </p>
+            <div className="flex items-center justify-center gap-1 text-neon-pink/80 text-xs">
+              <span className="w-2 h-2 rounded-full bg-neon-pink animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-neon-pink/70 animate-[pulse_1.4s_ease-in-out_infinite_0.2s]" />
+              <span className="w-2 h-2 rounded-full bg-neon-pink/50 animate-[pulse_1.4s_ease-in-out_infinite_0.4s]" />
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

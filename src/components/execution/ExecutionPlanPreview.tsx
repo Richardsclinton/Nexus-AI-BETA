@@ -14,7 +14,7 @@ export function ExecutionPlanPreview({ input, mode, executionMode }: ExecutionPl
   return (
     <div className="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm p-4 md:p-5">
       <div className="flex items-center justify-between gap-3 mb-3">
-        <h4 className="text-sm md:text-base font-semibold bg-gradient-to-r from-light-blue via-neon-pink to-light-blue bg-clip-text text-transparent">
+        <h4 className="text-sm md:text-base font-semibold text-neon-pink">
           Execution Plan Preview
         </h4>
         <span className="text-[10px] md:text-xs text-white/50 uppercase tracking-wider" title="Quest = one complete orchestrated execution">

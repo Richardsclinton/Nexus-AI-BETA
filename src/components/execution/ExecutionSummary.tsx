@@ -24,7 +24,7 @@ export function ExecutionSummary({ data }: ExecutionSummaryProps) {
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-left"
       >
-        <span className="text-sm md:text-base font-semibold text-white">Execution Summary</span>
+        <span className="text-sm md:text-base font-semibold text-neon-pink">Execution Summary</span>
         <span className="text-xs text-white/60">{open ? "Hide" : "Show"}</span>
       </button>
 

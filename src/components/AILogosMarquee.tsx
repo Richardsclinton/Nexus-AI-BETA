@@ -34,12 +34,7 @@ export default function AILogosMarquee() {
     <section className="relative w-full py-6 md:py-8 overflow-hidden">
       {/* Container global centré et plus compact */}
       <div className="mx-auto max-w-5xl px-4">
-        {/* Texte au-dessus (légère accroche luxe) */}
-        <div className="text-center mb-4 md:mb-6">
-          <p className="text-[11px] md:text-xs tracking-[0.25em] uppercase text-white/40">
-            Trusted AI ecosystem
-          </p>
-        </div>
+        {/* Texte au-dessus (légère accroche luxe) — retiré */}
 
         {/* Container de la bande avec effet fade */}
         <div className="relative w-full rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 via-white/0 to-white/5 backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.6)]">

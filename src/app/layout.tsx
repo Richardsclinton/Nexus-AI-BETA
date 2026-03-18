@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { DappNav } from "@/components/DappNav";
 import GlbBackground from "@/components/GlbBackground";
+import AppBootLoader from "@/components/AppBootLoader";
 import "./globals.css";
 
 export const metadata = {
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#000] text-white antialiased">
+        <AppBootLoader />
         <GlbBackground />
         <div className="relative z-10 min-h-screen flex flex-col w-full pt-12">
           <DappNav />

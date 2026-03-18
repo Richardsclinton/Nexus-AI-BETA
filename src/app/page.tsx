@@ -878,10 +878,36 @@ export default function EnterNexusPage() {
     lastSummarizedStartRef.current = null;
     const allAgents =
       requestKind === "trailer" ? TRAILER_AGENTS : requestKind === "image" ? IMAGE_AGENTS : TEXT_AGENTS;
-    const agentCount = useFewerAgents ? (Math.random() < 0.5 ? 2 : 3) : 4 + Math.floor(Math.random() * 4);
-    const aiModels = [...allAgents]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, Math.min(agentCount, allAgents.length));
+
+    // Sélection des agents déployés
+    let aiModels: string[];
+    if (requestKind === "text") {
+      // Pour toutes les requêtes textuelles :
+      // - toujours Claude + ChatGPT
+      // - ajout de Venice AI si la demande est "assez osée" (plus longue / complexe)
+      const isBoldTextRequest =
+        !isSmallRequest &&
+        (trimmed.split(/\s+/).length > 20 ||
+          /\b(plan|strategy|architecture|pipeline|multi[-\s]?step|orchestrat)/i.test(trimmed));
+
+      aiModels = isBoldTextRequest
+        ? ["Claude", "ChatGPT", "Venice AI"]
+        : ["Claude", "ChatGPT"];
+    } else {
+      // Limiter le nombre d'agents non textuels à 3 max :
+      // - image : 1 à 3 agents
+      // - trailer : 2 à 3 agents
+      let agentCount: number;
+      if (requestKind === "trailer") {
+        agentCount = 2 + Math.floor(Math.random() * 2); // 2–3
+      } else {
+        // image
+        agentCount = 1 + Math.floor(Math.random() * 3); // 1–3
+      }
+      aiModels = [...allAgents]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.min(agentCount, allAgents.length));
+    }
     const pool =
       requestKind === "trailer"
         ? ORCHESTRATOR_POOL_TRAILER
@@ -1808,7 +1834,7 @@ export default function EnterNexusPage() {
                             setHistoryCodeInput(e.target.value.replace(/\D/g, "").slice(0, 6));
                             setHistoryCodeError(null);
                           }}
-                          className="w-28 px-3 py-2 rounded-lg border border-white/20 bg-black/50 text-white text-center text-lg tracking-[0.5em] font-mono focus:outline-none focus:border-neon-pink/50 focus:ring-1 focus:ring-neon-pink/30"
+                          className="w-24 px-2 py-1.5 rounded-lg border border-white/20 bg-black/50 text-white text-center text-base tracking-[0.35em] font-mono focus:outline-none focus:border-neon-pink/50 focus:ring-1 focus:ring-neon-pink/30"
                         />
                         <input
                           type="password"
@@ -1821,7 +1847,7 @@ export default function EnterNexusPage() {
                             setHistoryCodeError(null);
                           }}
                           onKeyDown={(e) => e.key === "Enter" && handleHistoryCodeSetup()}
-                          className="w-28 px-3 py-2 rounded-lg border border-white/20 bg-black/50 text-white text-center text-lg tracking-[0.5em] font-mono focus:outline-none focus:border-neon-pink/50 focus:ring-1 focus:ring-neon-pink/30"
+                          className="w-24 px-2 py-1.5 rounded-lg border border-white/20 bg-black/50 text-white text-center text-base tracking-[0.35em] font-mono focus:outline-none focus:border-neon-pink/50 focus:ring-1 focus:ring-neon-pink/30"
                         />
                         <motion.button
                           whileHover={{ scale: 1.05 }}
@@ -1897,7 +1923,7 @@ export default function EnterNexusPage() {
                   {/* AI Agents Header */}
                   <div className="flex items-center justify-between p-4 border-b border-white/10 relative z-20">
                     <h3
-                      className="text-lg md:text-xl font-semibold text-neon-pink"
+                      className="text-sm md:text-base font-semibold text-neon-pink"
                       title="Agent-level orchestration trace for each Quest"
                     >
                       AI Agents Orchestration
